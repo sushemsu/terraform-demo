@@ -17,11 +17,12 @@ resource "aws_db_instance" "default" {
 }
 
 resource "aws_db_instance" "replica" {
-  count                   = var.db_replicas != null ? var.db_replicas : 0
+  count                   = var.db_replicas != 0 ? var.db_replicas : 0
   instance_class          = var.instance_class
   vpc_security_group_ids  = [data.terraform_remote_state.eks.outputs.cluster_worker_security_group_id]
   replicate_source_db     = aws_db_instance.default.arn
   backup_retention_period = 0
+  skip_final_snapshot     = var.skip_final_snapshot
 }
 
 resource "random_password" "db_pass" {
@@ -36,7 +37,7 @@ resource "aws_db_subnet_group" "private_db_subnet" {
 }
 
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name = "dbcredsbase"
+  name = "dbcredsbase2"
 }
 
 resource "aws_secretsmanager_secret_version" "db_pass" {

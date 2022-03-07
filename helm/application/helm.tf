@@ -36,14 +36,6 @@ resource "helm_release" "mw" {
     name  = "image.debug"
     value = "true"
   }
-  set {
-    name  = "service.ports.https"
-    value = "8443"
-  }
-  set {
-    name  = "service.nodePorts.https"
-    value = "8443"
-  }
 }
 
 data "aws_secretsmanager_secret_version" "db_pass" {

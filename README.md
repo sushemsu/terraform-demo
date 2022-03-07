@@ -97,6 +97,34 @@ builtin echo "${endpoint_ip} mediawiki" >> sudo tee -a /etc/hosts # you can ref 
 [[ "$(uname -s)" == "MINGW64"* ]] && echo ":("
 ```
 
+### bad ssl and deploy
+could put an alb in front with cert but heres a quick hack to use self signed cert for deployment to redirect to valid container port  
+https://github.com/bitnami/charts/blob/master/bitnami/mediawiki/templates/deployment.yaml#L156  
+^-- not a templated value, so to change port it's expecting, edit the deployment and change 443 -> 8443 for container port  
+edit via `kubectl edit deployment mediawiki`  
+```yaml
+        name: mediawiki
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 443
+          name: https
+          protocol: TCP
+```
+to look like
+```
+        name: mediawiki
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+```
+
+
 ---
 ### refs/src/doc
 
